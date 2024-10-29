@@ -1,0 +1,101 @@
+[tool.poetry]
+name = "lilith"
+version = "0.1.0"
+
+# TODO
+description = ""
+
+authors = ["DavidTokar12 <1413david@gmail.com>"]
+readme = "README.md"
+
+# TODO
+# homepage = "https://python-poetry.org/"
+# repository = "https://github.com/python-poetry/poetry"
+# documentation = "https://python-poetry.org/docs"
+# keywords = ["packaging", "dependency", "poetry"]
+# classifiers = [
+#    "Topic :: Software Development :: Build Tools",
+#    "Topic :: Software Development :: Libraries :: Python Modules",
+#]
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+ruff = "^0.7.1"
+click = "^8.1.7"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.7.1"
+mypy = "^1.13.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+extend-exclude = [
+    "docs/*",
+]
+fix = true
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+extend-select = [
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "ERA", # flake8-eradicate/eradicate
+    "I",   # isort
+    "N",   # pep8-naming
+    "PIE", # flake8-pie
+    "PGH", # pygrep
+    "RUF", # ruff checks
+    "SIM", # flake8-simplify
+    "T20", # flake8-print
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "UP",  # pyupgrade
+]
+ignore = [
+    "B904", # use 'raise ... from err'
+    "B905", # use explicit 'strict=' parameter with 'zip()'
+]
+extend-safe-fixes = [
+    "TCH", # move import from and to TYPE_CHECKING blocks
+]
+unfixable = [
+    "ERA", # do not autoremove commented out code
+]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.isort]
+force-single-line = true
+lines-between-types = 1
+lines-after-imports = 2
+known-first-party = ["poetry"]
+known-third-party = ["poetry.core"]
+required-imports = ["from __future__ import annotations"]
+
+
+
+
+[tool.mypy]
+files = "src, tests"
+mypy_path = "src"
+namespace_packages = true
+explicit_package_bases = true
+strict = true
+enable_error_code = [
+    "ignore-without-code",
+    "redundant-expr",
+    "truthy-bool",
+]
+exclude = [
+    "tests/fixtures",
+    "tests/masonry/builders/fixtures",
+    "tests/utils/fixtures",
+]
