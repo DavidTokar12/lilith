@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-print("This is running!")
 
 if TYPE_CHECKING:
     import logging

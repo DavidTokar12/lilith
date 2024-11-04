@@ -1,0 +1,13 @@
+*.egg-info
+*.egg
+*.pyc
+*.so
+*.pyd
+.DS_Store
+/MANIFEST
+/.coverage
+/coverage.xml
+/htmlcov
+/build
+/dist
+/docs
