@@ -12,6 +12,7 @@ class CodeFolderNode(NodeMixin):
     def __init__(
         self, name: str, folder_path: str, parent: CodeFolderNode = None
     ) -> None:
+        super().__init__()
         self.name = name
         self.folder_path = folder_path
         self.parent = parent
@@ -65,7 +66,6 @@ class CodeFileNode(NodeMixin):
             )
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
-        return None
 
     def refresh_content_hash(self):
         content = self.get_content()["content"]
