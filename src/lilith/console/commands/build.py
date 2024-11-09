@@ -15,6 +15,6 @@ class BuildCommand:
         self.logger = logger
 
     def run(self):
+        # from lilith.core.build.builder import CodeHierarchyBuilder 
         self.logger.info("Running build")
 
-    # def

@@ -25,6 +25,9 @@ ruff = "^0.7.1"
 click = "^8.1.7"
 openai = "^1.53.0"
 anytree = "^2.12.1"
+fastapi = "^0.115.4"
+uvicorn = "^0.32.0"
+neo4j = "^5.26.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -81,9 +84,6 @@ lines-after-imports = 2
 known-first-party = ["poetry"]
 known-third-party = ["poetry.core"]
 required-imports = ["from __future__ import annotations"]
-
-
-
 
 [tool.mypy]
 files = "src, tests"
