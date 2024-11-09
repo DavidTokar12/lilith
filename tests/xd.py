@@ -7,14 +7,14 @@ import struct
 from .compat import PY3, unichr
 from .scanner import make_scanner, JSONDecodeError
 
-###FUNCTION###
+###BOUND###
 def _import_c_scanstring():
     try:
         from ._speedups import scanstring
         return scanstring
     except ImportError:
         return None
-###FUNCTION###
+###BOUND###
 c_scanstring = _import_c_scanstring()
 
 # NOTE (3.1.0): JSONDecodeError may still be imported from this module for
@@ -23,7 +23,7 @@ __all__ = ['JSONDecoder']
 
 FLAGS = re.VERBOSE | re.MULTILINE | re.DOTALL
 
-###FUNCTION###
+###BOUND###
 def _floatconstants():
     if sys.version_info < (2, 6):
         _BYTES = '7FF80000000000007FF0000000000000'.decode('hex')
@@ -32,7 +32,7 @@ def _floatconstants():
         nan = float('nan')
         inf = float('inf')
     return nan, inf, -inf
-###FUNCTION###
+###BOUND###
 
 NaN, PosInf, NegInf = _floatconstants()
 
@@ -63,7 +63,7 @@ else:
         return int(s)
 
 
-###FUNCTION###
+###BOUND###
 def scan_four_digit_hex(s, end, _m=re.compile(r'^[0-9a-fA-F]{4}$').match):
     """Scan a four digit hex number from s[end:end + 4]
     """
@@ -75,9 +75,9 @@ def scan_four_digit_hex(s, end, _m=re.compile(r'^[0-9a-fA-F]{4}$').match):
         return int(esc, 16), end + 4
     except ValueError:
         raise JSONDecodeError(msg, s, end - 2)
-###FUNCTION###
+###BOUND###
 
-###FUNCTION###
+###BOUND###
 def py_scanstring(s, end, encoding=None, strict=True,
         _b=BACKSLASH, _m=STRINGCHUNK.match, _join=u''.join,
         _PY3=PY3, _maxunicode=sys.maxunicode,
@@ -150,7 +150,7 @@ def py_scanstring(s, end, encoding=None, strict=True,
         # Append the unescaped character
         _append(char)
     return _join(chunks), end
-###FUNCTION###
+###BOUND###
 
 
 # Use speedup if available
@@ -159,7 +159,7 @@ scanstring = c_scanstring or py_scanstring
 WHITESPACE = re.compile(r'[ \t\n\r]*', FLAGS)
 WHITESPACE_STR = ' \t\n\r'
 
-###FUNCTION###
+###BOUND###
 def JSONObject(state, encoding, strict, scan_once, object_hook,
         object_pairs_hook, memo=None,
         _w=WHITESPACE.match, _ws=WHITESPACE_STR):
@@ -253,9 +253,9 @@ def JSONObject(state, encoding, strict, scan_once, object_hook,
     if object_hook is not None:
         pairs = object_hook(pairs)
     return pairs, end
-###FUNCTION###
+###BOUND###
 
-###FUNCTION###
+###BOUND###
 def JSONArray(state, scan_once, _w=WHITESPACE.match, _ws=WHITESPACE_STR):
     (s, end) = state
     values = []
@@ -291,8 +291,9 @@ def JSONArray(state, scan_once, _w=WHITESPACE.match, _ws=WHITESPACE_STR):
             pass
 
     return values, end
-###FUNCTION###
+###BOUND###
 
+###BOUND###
 class JSONDecoder(object):
     """Simple JSON <http://json.org> decoder
 
@@ -324,6 +325,7 @@ class JSONDecoder(object):
 
     """
 
+###BOUND###
     def __init__(self, encoding=None, object_hook=None, parse_float=None,
             parse_int=None, parse_constant=None, strict=True,
             object_pairs_hook=None, allow_nan=False):
@@ -387,7 +389,9 @@ class JSONDecoder(object):
         self.parse_string = scanstring
         self.memo = {}
         self.scan_once = make_scanner(self)
+###BOUND###
 
+###BOUND###
     def decode(self, s, _w=WHITESPACE.match, _PY3=PY3):
         """Return the Python representation of ``s`` (a ``str`` or ``unicode``
         instance containing a JSON document)
@@ -400,7 +404,9 @@ class JSONDecoder(object):
         if end != len(s):
             raise JSONDecodeError("Extra data", s, end, len(s))
         return obj
+###BOUND###
 
+###BOUND###
     def raw_decode(self, s, idx=0, _w=WHITESPACE.match, _PY3=PY3):
         """Decode a JSON document from ``s`` (a ``str`` or ``unicode``
         beginning with a JSON document) and return a 2-tuple of the Python
@@ -426,3 +432,4 @@ class JSONDecoder(object):
             elif ord0 == 0xef and s[idx:idx + 3] == '\xef\xbb\xbf':
                 idx += 3
         return self.scan_once(s, idx=_w(s, idx).end())
+###BOUND###

@@ -5,6 +5,7 @@ import mimetypes
 import os
 
 from anytree import NodeMixin
+from anytree import RenderTree
 from anytree.exporter import JsonExporter
 
 
@@ -106,11 +107,11 @@ def build_tree(current_path, parent=None):
 root_path = "/workspaces/python3-poetry-pyenv/tests/simplejson-master"
 tree_root = build_tree(root_path)
 
-# for pre, _, node in RenderTree(tree_root):
-#     print(f"{pre}{node.name}")
+for pre, _, node in RenderTree(tree_root):
+    print(f"{pre}{node.name}")
 
 
 # exporter = JsonExporter(indent=2, sort_keys=True)
 # print(exporter.export(tree_root))
 
-print(tree_root.children[8].get_content())
+# print(tree_root.children[8].get_content())

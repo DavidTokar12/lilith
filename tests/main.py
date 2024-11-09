@@ -3,7 +3,7 @@ from __future__ import annotations
 import ast
 import os
 
-from utils import FUNCTION_SEPERATOR
+from utils import BOUND_SEPERATOR
 
 
 def get_bounds_of_node(node):
@@ -30,36 +30,43 @@ def get_code_of_node(node, lines):
     return code
 
 
-def process_node(
-    node, lines: list[str], output_node_content: list[dict], output_bounds: list[tuple]
+def process_tree(
+    tree: ast.Module,
+    lines: list[str],
+    output_node_content: list[dict],
+    output_bounds: list[tuple],
 ):
     """Recursively process AST nodes, inserting markers around classes and functions."""
+    for node in tree.body:
 
-    # assert (
-    #     len(output_node_content) + len(output_bounds) == 0
-    # ), f"Got filled arrays as input: {output_node_content} {output_bounds}"
+        if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
 
-    if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
+            function_code = get_code_of_node(node, lines)
+            function_bounds = get_bounds_of_node(node)
 
-        code = get_code_of_node(node, lines)
-        bounds = get_bounds_of_node(node)
+            output_node_content.append({"type": "function", "code": function_code})
+            output_bounds.append(function_bounds)
 
-        output_node_content.append({"type": "function", "code": code})
-        output_bounds.append(bounds)
+        elif isinstance(node, ast.ClassDef):
 
-    elif isinstance(node, ast.ClassDef):
-        code = get_code_of_node(node, content)
+            class_code = get_code_of_node(node, content)
+            class_bounds = get_bounds_of_node(node)
 
-        for child in node.body:
-            if isinstance(child, ast.FunctionDef | ast.AsyncFunctionDef):
-                method_code = get_code_of_node(child, lines)
-                print(method_code)
-            else:
-                # Recursively process other nodes inside the class (e.g., nested classes)
-                process_node(child, lines, output_node_content, output_bounds)
-    else:
-        # imports and expressions
-        pass
+            output_bounds.append(class_bounds)
+
+            output_class = {"type": "class", "code": class_code, "functions": []}
+
+            for child_node in node.body:
+
+                if isinstance(child_node, ast.FunctionDef | ast.AsyncFunctionDef):
+
+                    method_code = get_code_of_node(child_node, lines)
+                    method_bounds = get_bounds_of_node(child_node)
+                    output_class["functions"].append(method_code)
+
+                    output_bounds.append(method_bounds)
+        else:
+            pass
 
 
 def append_seperator(seperator, output):
@@ -83,11 +90,11 @@ def add_seperators(code_lines: list[str], bounds: list[tuple]):
     for i in range(len(lines) + 1):
 
         if i in positions_to_insert_before:
-            append_seperator(FUNCTION_SEPERATOR, new_lines)
+            append_seperator(BOUND_SEPERATOR, new_lines)
         if i < len(lines):
             new_lines.append(lines[i])
         if i in positions_to_insert_after:
-            append_seperator(FUNCTION_SEPERATOR, new_lines)
+            append_seperator(BOUND_SEPERATOR, new_lines)
 
     return new_lines
 
@@ -104,12 +111,8 @@ with open(
     output_node_contents = []
     output_bounds = []
 
-    # Process top-level nodes in order
-    for node in tree.body:
-        process_node(node, lines, output_node_contents, output_bounds)
-        # print(node)
-
-    print(output_bounds)
+    print(type(tree))
+    process_tree(tree, lines, output_node_contents, output_bounds)
 
     seperated_lines = add_seperators(lines, output_bounds)
 
