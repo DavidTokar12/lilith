@@ -7,15 +7,16 @@ from pathlib import Path
 
 import click
 
+logger = logging.getLogger("lilith")
+logger.setLevel(logging.INFO)
+
+handler = logging.StreamHandler()
+formatter = logging.Formatter("Lilith - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 
 class Application:
-    def __init__(self):
-        self.log_level = logging.INFO
-        self.logger = logging.getLogger("lilith")
-
-    def setup_logging(self):
-        logging.basicConfig(level=self.log_level, force=True)
-        self.logger.setLevel(self.log_level)
 
     def run(self):
         exit_code = cli(obj=self, standalone_mode=False)
@@ -33,32 +34,38 @@ def cli(app, log_level):
     """
     CLI application similar to Poetry, built using Click.
     """
-
     numeric_level = getattr(logging, log_level.upper(), None)
     if not isinstance(numeric_level, int):
         click.echo(f"Invalid log level: {log_level}")
         raise click.BadParameter("Invalid log level")
 
-    app.log_level = numeric_level
-    app.setup_logging()
+    logger.setLevel(numeric_level)
 
 
 @cli.command()
-@click.argument("path", type=click.Path(exists=True))
+@click.option(
+    "--path",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+    required=True,
+    help="Path to the project root directory.",
+)
+@click.option(
+    "--reset", is_flag=True, default=False, help="Reset the build before starting."
+)
 @click.pass_context
-def build(ctx, path):
+def build(ctx, path, reset):
     """Builds the project at the specified path."""
-    app = ctx.obj
+    
     build_path = Path(path).resolve()
     try:
         from lilith.console.commands.build import BuildCommand
 
-        app.logger.info(f"Building project at {build_path}")
-        BuildCommand(build_path=build_path, logger=app.logger).run()
+        logger.info(f"Building project at {build_path}")
+        BuildCommand(build_path=build_path, reset=reset).run()
         return 0
 
     except Exception as e:
-        app.logger.error(f"An error occurred during build: {e}")
+        logger.error(f"An error occurred during build: {e}")
         click.echo(f"Error: {e}", err=True)
         return 1
 
