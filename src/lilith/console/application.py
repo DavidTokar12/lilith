@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import logging
 import sys
+import traceback
 
 from pathlib import Path
 
 import click
+
 
 logger = logging.getLogger("lilith")
 logger.setLevel(logging.INFO)
@@ -55,7 +57,7 @@ def cli(app, log_level):
 @click.pass_context
 def build(ctx, path, reset):
     """Builds the project at the specified path."""
-    
+
     build_path = Path(path).resolve()
     try:
         from lilith.console.commands.build import BuildCommand
@@ -66,7 +68,7 @@ def build(ctx, path, reset):
 
     except Exception as e:
         logger.error(f"An error occurred during build: {e}")
-        click.echo(f"Error: {e}", err=True)
+        logger.info(traceback.format_exc())
         return 1
 
 

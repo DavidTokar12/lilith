@@ -21,13 +21,15 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-ruff = "^0.7.1"
 click = "^8.1.7"
 openai = "^1.53.0"
 anytree = "^2.12.1"
 fastapi = "^0.115.4"
 uvicorn = "^0.32.0"
 neo4j = "^5.26.0"
+python-dotenv = "^1.0.1"
+tqdm = "^4.67.0"
+black = "^24.10.0"
 
 
 [tool.poetry.group.dev.dependencies]

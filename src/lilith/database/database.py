@@ -73,7 +73,7 @@ class Neo4jGraphDatabase:
     def __insert_nodes(self, node_list: list[dict]):
         def create_node(tx, node):
             query = (
-                "CREATE (n:Node { id: $id, type: $type, name: $name, path: $path }) "
+                "CREATE (n:Node { id: $id, type: $type, name: $name, path: $path, parent: $parent, code_content: $code_content, embedding: $embedding, description: $description })"
                 "RETURN n.id AS node_id"
             )
 
@@ -83,6 +83,10 @@ class Neo4jGraphDatabase:
                 type=node["type"],
                 name=node["name"],
                 path=node["path"],
+                parent=node["parent"],
+                code_content=node["code_content"],
+                embedding=node["embedding"],
+                description=node["description"],
             )
 
             record = result.single()
